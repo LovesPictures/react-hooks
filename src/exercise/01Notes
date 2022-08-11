@@ -1,0 +1,50 @@
+// useState: greeting
+// http://localhost:3000/isolated/exercise/01.js
+
+// Notes:
+// import React from 'react'
+//1. Destructure the props in ({place}) or default to "" if its not passed to Greetings
+function Greeting({initialName = ''}) {
+  console.log('rendering')
+
+  function getInitialNameValue() {
+    //local storage is an expensive operation
+    return window.localStorage.getItem('name') || initialName
+  }
+  // before it destructured - under the hood  name = array[0] setName = array[1]
+  //2. Set up the the useState initialize it with the expected value type
+  //synchronise world with local storage
+  const [name, setName] = React.useState(getInitialNameValue)
+  //***local storage get item API using item or initial name
+
+  //a side effect
+  //using local storage for persistance - called on the initial render and every update on the component
+  //synchronise local storage with world, updated on rerender
+  React.useEffect(() => {
+    //***set item
+    window.localStorage.setItem('name', name)
+  }, [name])
+
+  function handleChange(event) {
+    // event.target.value this ensures you can see updated values in the input
+    setName(event.target.value)
+  }
+  return (
+    <div>
+      <form>
+        <label htmlFor="name">Name: </label>
+        {/* "value" prop turns the input into a controlled input  */}
+        <input value={name} onChange={handleChange} id="name" />
+      </form>
+      {name ? <strong>Hello {name}</strong> : 'Please type your name'}
+    </div>
+  )
+}
+
+function App() {
+  //3. make the function accept an initial value
+  return <Greeting initialName="Georgie" />
+  // return <Greeting initialName="Jude x" />
+}
+
+export default App
